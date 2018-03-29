@@ -9,12 +9,14 @@
 int main(int argc, char *argv[])
 {
 	int fd = open("/dev/dht12.0",O_RDONLY);
-	if(fd<0)
+	if(fd<0){
 		printf("open error\n");
+		goto end;
+	}
 	char buf[5];
-	int number=100,i;
+	int number=500,i;
 	if(argc != 2 || (strncmp(argv[1],"all",3) && strncmp(argv[1],"hum",3) && strncmp(argv[1],"tem",3))){
-		printf("please input: get_env <all | hum | tem>!\n");
+		printf("please input: %s <all | hum | tem>!\n",argv[0]);
 		goto end;
 	}
 	while(number--)
