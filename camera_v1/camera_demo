@@ -1,0 +1,57 @@
+#!/bin/sh
+script_path=$(cd `dirname $0`; pwd)
+listfile="passenger_flow.txt"
+server_addr=$1
+filepath=$2
+filepath="/${filepath#*/}"
+filepath=${filepath%*/}
+
+if [ -z "$server_addr" ] || [ -z "$filepath" ]
+then
+        echo "please execute: ./script_name server_addr savepath" > /dev/console
+	for i in $(ls /dev/pts)
+	do 
+		echo "please execute: ./script_name server_addr savepath" > /dev/pts/$i
+	done
+        exit 1
+fi
+
+if [ ! -d "$filepath" ]
+then
+	mkdir -p $filepath
+fi
+
+if [ ! -e $filepath/$listfile ]
+then
+	touch $filepath/$listfile
+fi
+
+while true
+do
+	rm -f /tmp/video.png
+	
+	wget -q http://192.168.1.1/images/video.png -P /tmp
+	if [ $? -eq 0 ] && [ $(ls -l /tmp | grep video.png | awk '{print $5}') -eq 2514 ]
+	then
+		rm -f /tmp/video.png
+		echo 6666 > /dev/console
+		while true
+		do	
+
+			cd $filepath && tftp -p $server_addr -l $listfile
+
+			if [ $? -ne 0 ]
+			then
+				echo "tftp failed! Please check the TFTP service" > /dev/console
+			else
+				$script_path/sepcam_ipc_demo -f $filepath & 
+				$script_path/face_file_watch $server_addr $filepath
+				exit 0
+			fi
+			
+			sleep 10 
+		done
+	fi
+	
+	sleep 10
+done

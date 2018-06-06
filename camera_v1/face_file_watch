@@ -1,0 +1,93 @@
+#!/bin/sh
+
+listfile="tftp_list.txt"
+psger_flow="passenger_flow.txt"
+server_addr=$1
+filepath=$2
+
+
+if [ ! -e $filepath/$psger_flow ]
+then
+	touch $filepath/$psger_flow
+	chmod 777 $filepath/$psger_flow
+fi
+
+
+if [ ! -e $filepath/$listfile ]
+then
+        touch $filepath/$listfile
+        chmod 777 $filepath/$listfile
+fi
+	
+watch_loop()
+{
+	if [ $(ps | grep face_file_watch | grep -v grep | wc -l) -gt 2 ]
+	then
+        	sleep 6
+        	if [ $(ps | grep face_file_watch | grep -v grep | wc -l) -gt 2 ]
+        	then
+        	        exit 0
+        	fi
+	fi
+
+	while true
+	do
+
+	chmod 777 $filepath/*
+
+	if [ $(ls -l $filepath | grep -v $listfile | grep -v $psger_flow | wc -l) -gt 60 ]
+	then
+		for i in $(ls -t $filepath | grep jpeg | awk '{if(NR>60){print $0}}' | awk -F '_' '{print $1"_"$2}')
+		do
+			rm "$filepath/$i"*
+		done
+	fi
+	
+	if [ $(cat $filepath/$listfile | wc -l) -ge 1 ]
+	then
+		sed -i '/^$/d' $filepath/$listfile
+
+		for i in $(awk '{print $1}' $filepath/$listfile | awk -F '/' '{print $NF}')
+		do
+			echo $i > /dev/console
+			if [ -e "$filepath/$i" ]
+			then
+				cd $filepath && tftp -p $server_addr -l $i
+				if [ $? -eq 0 ]
+				then
+					sed -i "/$i/d" $filepath/$listfile
+				fi
+				sleep 0.5
+			else
+				sed -i "/$i/d" $filepath/$listfile
+			fi
+		done
+	fi
+
+	if [ -n "$(cat $filepath/$psger_flow | grep update)" ]
+	then
+		sed -i "/update/d" $filepath/$psger_flow
+		
+		if [ $(cat $filepath/$psger_flow | wc -l) -ge 61 ]
+		then
+			sed -i '1d' $filepath/$psger_flow
+		fi
+		
+		cd $filepath && tftp -p $server_addr -l $psger_flow
+		if [ $? -ne 0 ]
+		then
+			echo $psger_flow >> $filepath/$listfile
+		fi
+	fi
+	
+	if [ -z "$(ps | grep sepcam_ipc_demo | grep -v grep)" ]
+	then
+		exit 0
+	fi
+	
+	sleep 2
+	
+	done
+}
+
+watch_loop &
