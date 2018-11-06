@@ -1,0 +1,62 @@
+#!/bin/sh
+
+count=0
+result=0
+while [ $count -lt 3 ]
+do
+	echo vc_test > /dev/console
+	if read -t 2 voltage < /dev/console;then
+		if [[ "`echo $voltage | grep Voltage`" != "" ]];then
+			echo "$voltage" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+			if read -t 2 current < /dev/console;then
+				if [[ "`echo $current | grep Current`" != "" ]];then
+					echo "$current" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+					break
+				fi
+			fi
+		fi
+	fi
+	let count=count+1
+done
+
+V33="`echo $voltage | cut -d ' ' -f 2`"
+if [ $V33 -gt 3200 -a $V33 -lt 3400 ];then
+	let result=result+1
+else
+	echo "V3.3 error!" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+fi
+
+V25="`echo $voltage | cut -d ' ' -f 3`"
+if [ $V25 -gt 2400 -a $V25 -lt 2600 ];then
+        let result=result+1      
+else
+	echo "V2.5 error!" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+fi
+
+V20="`echo $voltage | cut -d ' ' -f 4`"
+if [ $V20 -gt 1900 -a $V20 -lt 2100 ];then
+        let result=result+1      
+else                                   
+        echo "V2.0 error!" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+fi
+
+C33="`echo $current | cut -d ' ' -f 2`"     
+if [ $C33 -gt 200 -a $C33 -lt 2100 ];then
+        let result=result+1
+else
+        echo "C3.3 error!" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+fi
+
+C20="`echo $current | cut -d ' ' -f 3`"
+if [ $C20 -gt 200 -a $C20 -lt 2100 ];then
+        let result=result+1                  
+else                       
+        echo "C2.0 error!" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+fi
+
+
+if [ $result -eq 5 ];then
+	echo "voltage and current test success!" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+else
+	echo "voltage and current test failed!" 2>/dev/null > $(ls /dev/pts/* 2>/dev/null)
+fi

@@ -1,0 +1,58 @@
+#!/bin/sh
+#sleep 30
+SAVE_NAME=/watchdog.out
+echo "time@`date +%Y-%m-%d\ %H:%M:%S`" >> $SAVE_NAME
+start_time="$(date -d "`cat $SAVE_NAME | grep time@ | head -n 1 | cut -d @ -f 2`" +%s)"
+last_time="$(date -d "`cat $SAVE_NAME | grep time@ | tail -n 2 | head -n 1 | cut -d @ -f 2`" +%s)"
+current_time="$(date -d "`cat $SAVE_NAME | grep time@ | tail -n 1 | cut -d @ -f 2`" +%s)"
+
+get_time_interval(){
+	if [ $1 -eq "0" ]
+	then
+		let interval=$current_time-$start_time
+	else
+		let interval=$current_time-$last_time
+	fi
+}
+
+
+echo_information(){
+	if [ $1 -eq 0 ]
+	then
+		echo "#####################" >>$SAVE_NAME
+		echo "time1:`date +%m/%d\ %H-%M-%S` start:$start_time last:$last_time current:$current_time interval:$interval" >> $SAVE_NAME
+		echo -e "uboot fail to stop the hardware watchdog!\r\n" >> $SAVE_NAME
+	elif [ $1 -eq 1 ]
+	then
+		echo "#####################" >>$SAVE_NAME 
+		echo "time2:`date +%m/%d\ %H-%M-%S` start:$start_time last:$last_time current:$current_time interval:$interval" >> $SAVE_NAME
+		echo -e "uboot fail to start the hardware watchdog!\r\n" >> $SAVE_NAME
+	else
+		echo "#####################" >>$SAVE_NAME
+		echo "time3:`date +%m/%d\ %H-%M-%S` start:$start_time last:$last_time current:$current_time interval:$interval" >> $SAVE_NAME                    
+		echo -e "start feeddog loop!\r\n" >> $SAVE_NAME
+	fi
+}
+
+get_time_interval 0
+
+if [ $interval -gt 604800 ]
+then
+	/watchdog.sh &
+	echo_information 2	
+else
+	cat $SAVE_NAME | tail -n 3 | grep start
+	if [ $? -ne 0 ]
+	then
+		get_time_interval 1
+		if [ $interval -gt 205 ]
+		then
+			echo_information 0
+		fi
+	fi
+	sleep 180
+	echo_information 1
+	reboot
+fi
+
+

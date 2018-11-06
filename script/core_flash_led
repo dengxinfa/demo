@@ -1,0 +1,195 @@
+#!/bin/sh
+###################################################
+#???GPIO:                                      #
+#GPIO0  GPIO1  GPIO6  GPIO7  GPIO8  GPIO11 GPIO13 #
+#GPIO14 GPIO15 GPIO16 GPIO17 GPIO18 GPIO19 GPIO20 #
+#GPIO21 GPIO22 GPIO23 GPIO24 GPIO26 GPIO27 GPIO28 #
+###################################################
+
+###################################################
+#???GPIO:                                     #
+#SPI:       GPIO2 GPIO3 GPIO4 GPIO5               #
+#UART:      GPIO9 GPIO10                          #
+#reset??: GPIO11                                #
+#?????:GPIO12                                #
+#?????:GPIO25                                #
+###################################################
+
+ps | grep -E "fringe|middle|water" | grep -v grep | awk '{print $1}' | xargs kill -9 1>/dev/null 2>/dev/null
+
+echo 18 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio18/direction
+echo 0 > /sys/class/gpio/gpio18/value              
+echo 19 > /sys/class/gpio/export 2>/dev/null     
+echo out > /sys/class/gpio/gpio19/direction
+echo 0 > /sys/class/gpio/gpio19/value              
+echo 20 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio20/direction
+echo 0 > /sys/class/gpio/gpio20/value              
+echo 21 > /sys/class/gpio/export 2>/dev/null     
+echo out > /sys/class/gpio/gpio21/direction 
+echo 0 > /sys/class/gpio/gpio21/value
+echo 22 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio22/direction
+echo 0 > /sys/class/gpio/gpio22/value              
+echo 23 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio23/direction
+echo 0 > /sys/class/gpio/gpio23/value          
+echo 24 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio24/direction
+echo 0 > /sys/class/gpio/gpio24/value    
+echo 28 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio28/direction          
+echo 1 > /sys/class/gpio/gpio28/value              
+echo 0 > /sys/class/leds/gl_mifi\:usb_a_pow_nobatt/brightness
+echo 0 > /sys/class/leds/gl_mifi\:usb_a_pow_batt/brightness
+echo 0 > /sys/class/leds/gl_mifi\:usbpow/brightness
+echo 26 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio26/direction
+echo 0 > /sys/class/gpio/gpio26/value              
+echo 0 > /sys/class/leds/gl_mifi\:wan/brightness 
+echo 13 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio13/direction
+echo 1 > /sys/class/gpio/gpio13/value                        
+echo 0 > /sys/class/leds/gl_mifi\:lan/brightness
+echo 15 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio15/direction
+echo 0 > /sys/class/gpio/gpio15/value      
+echo 14 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio14/direction
+echo 0 > /sys/class/gpio/gpio14/value
+echo 1 > /sys/class/leds/gl_mifi\:wlan/brightness
+echo 0 > /sys/class/leds/gl_mifi\:net/brightness
+echo 17 > /sys/class/gpio/export 2>/dev/null                 
+echo out > /sys/class/gpio/gpio17/direction
+echo 1 > /sys/class/gpio/gpio17/value
+
+echo 1 > /sys/class/gpio/gpio18/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio18/value
+
+
+echo 1 > /sys/class/gpio/gpio19/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio19/value
+
+
+echo 1 > /sys/class/gpio/gpio20/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio20/value
+
+
+echo 1 > /sys/class/gpio/gpio21/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio21/value
+
+
+echo 1 > /sys/class/gpio/gpio22/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio22/value
+
+
+echo 1 > /sys/class/gpio/gpio23/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio23/value
+
+
+echo 24 > /sys/class/gpio/export 2>/dev/null
+echo out > /sys/class/gpio/gpio24/direction
+echo 1 > /sys/class/gpio/gpio24/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio24/value
+
+
+
+echo 0 > /sys/class/gpio/gpio28/value
+sleep 1
+echo 1 > /sys/class/gpio/gpio28/value
+
+
+echo 1 > /sys/class/leds/gl_mifi\:usb_a_pow_nobatt/brightness
+sleep 1
+echo 0 > /sys/class/leds/gl_mifi\:usb_a_pow_nobatt/brightness
+
+
+echo 1 > /sys/class/leds/gl_mifi\:usb_a_pow_batt/brightness
+sleep 1
+echo 0 > /sys/class/leds/gl_mifi\:usb_a_pow_batt/brightness
+
+
+echo 1 > /sys/class/leds/gl_mifi\:usbpow/brightness
+sleep 1
+echo 0 > /sys/class/leds/gl_mifi\:usbpow/brightness
+
+
+echo 26 > /sys/class/gpio/export 2>/dev/null
+echo out > /sys/class/gpio/gpio26/direction
+echo 1 > /sys/class/gpio/gpio26/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio26/value
+
+
+echo 1 > /sys/class/leds/gl_mifi\:wan/brightness
+sleep 1
+echo 0 > /sys/class/leds/gl_mifi\:wan/brightness
+
+
+echo 0 > /sys/class/gpio/gpio17/value
+sleep 1
+echo 1 > /sys/class/gpio/gpio17/value
+
+
+echo 1 > /sys/class/leds/gl_mifi\:lan/brightness
+sleep 1
+echo 0 > /sys/class/leds/gl_mifi\:lan/brightness
+
+
+echo 1 > /sys/class/gpio/gpio15/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio15/value
+
+
+echo 14 > /sys/class/gpio/export 2>/dev/null
+echo out > /sys/class/gpio/gpio14/direction
+echo 1 > /sys/class/gpio/gpio14/value
+sleep 1
+echo 0 > /sys/class/gpio/gpio14/value
+
+
+echo 0 > /sys/class/gpio/gpio13/value
+sleep 1
+echo 1 > /sys/class/gpio/gpio13/value
+
+
+echo 0 > /sys/class/leds/gl_mifi\:wlan/brightness
+sleep 1
+echo 1 > /sys/class/leds/gl_mifi\:wlan/brightness
+
+
+echo 1 > /sys/class/leds/gl_mifi\:net/brightness
+sleep 1
+echo 0 > /sys/class/leds/gl_mifi\:net/brightness
+
+
+
+echo 1 > /sys/class/gpio/gpio18/value
+echo 1 > /sys/class/gpio/gpio19/value
+echo 1 > /sys/class/gpio/gpio20/value
+echo 1 > /sys/class/gpio/gpio21/value
+echo 1 > /sys/class/gpio/gpio22/value
+echo 1 > /sys/class/gpio/gpio23/value
+echo 1 > /sys/class/gpio/gpio24/value
+echo 0 > /sys/class/gpio/gpio28/value
+echo 1 > /sys/class/leds/gl_mifi\:usb_a_pow_nobatt/brightness
+echo 1 > /sys/class/leds/gl_mifi\:usb_a_pow_batt/brightness
+echo 1 > /sys/class/leds/gl_mifi\:usbpow/brightness
+echo 1 > /sys/class/gpio/gpio26/value
+echo 1 > /sys/class/leds/gl_mifi\:wan/brightness
+echo 0 > /sys/class/gpio/gpio13/value
+echo 1 > /sys/class/leds/gl_mifi\:lan/brightness
+echo 1 > /sys/class/gpio/gpio15/value
+echo 1 > /sys/class/gpio/gpio14/value
+echo 0 > /sys/class/leds/gl_mifi\:wlan/brightness
+echo 1 > /sys/class/leds/gl_mifi\:net/brightness
+echo 0 > /sys/class/gpio/gpio17/value
+exit 0

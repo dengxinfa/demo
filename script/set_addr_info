@@ -1,0 +1,83 @@
+#!/bin/sh
+
+echo_msg_to_terminals(){
+	terminals=$(ls /dev/pts/* 2>/dev/null)
+	if [ -n "$terminals" ]; then
+		for terminal in $terminals; do
+			echo -e $1 > $terminal
+		done
+	fi
+	echo -e $1 > /dev/console
+}
+
+if [ $# -ne 3 ]
+then
+	echo_msg_to_terminals "\nUsage: $0 <address> <-A|-H> <data>\n\naddress : 0x9fxxxxxx\n-A data : write a string of ASCII data\n-H data : write a string of hex data\n"
+	exit 1
+fi
+
+addr=$1
+echo $addr | grep 0x
+if [ $? -eq 1 ];then
+	addr="0x"$addr
+fi
+
+let addr=$addr
+let base_addr=0x9f000000
+
+if [ $addr -lt $base_addr ]  
+then                                        
+        echo_msg_to_terminals "bad address" 
+        exit 1 
+fi
+
+if [ $2 != -A -a $2 != -H ]
+then
+	echo_msg_to_terminals "bad options"
+	exit 1
+fi
+
+data=$3
+let addr=$addr-0x9f000000
+data_length=`expr length $3`
+sum=0
+length=0
+mtd_sum=$(sed '1d' /proc/mtd | awk 'END{print NR}')
+
+for i in $(seq 1 $mtd_sum)
+do
+	let mtd_num=i-1
+	HEX="0x`sed '1d' /proc/mtd | awk '{print $2}' | sed -n "${i}p"}`"
+	let SEEK=$addr-$sum
+	cat /proc/mtd | grep "mtd$mtd_num" | grep -E "firmware|rootfs_data" 1>/dev/null 2>/dev/null
+	if [ $? -eq 1 ]
+	then	
+		let sum=sum+$HEX
+	fi
+	if [ $addr -lt $sum ]
+	then
+		dd if="/dev/mtdblock${mtd_num}" of=/tmp/mtd_bak 2>/dev/null
+		if [ $2 = -H ]
+		then
+			while [ $length -lt $data_length ]
+			do
+				hexdata=$hexdata"\x"${data:${length}:2}
+				let length=length+2
+				let COUNT=COUNT+1
+			done
+			printf "$hexdata" | dd of=/tmp/mtd_bak bs=1 count=$COUNT seek=$SEEK conv=notrunc 2>/dev/null
+        	else
+			printf "$data" | dd of=/tmp/mtd_bak bs=1 count=$data_length seek=$SEEK conv=notrunc 2>/dev/null
+		fi
+		mtd write /tmp/mtd_bak /dev/mtd${mtd_num} 1>/dev/null 2>/dev/null 
+		if [ $? -eq 0 ]
+		then
+			echo_msg_to_terminals "set info success"
+			exit 0
+		fi 
+		break
+	fi
+done
+
+
+echo_msg_to_terminals "set info fail"

@@ -1,0 +1,66 @@
+#!/bin/sh
+
+[ -n "$(grep "DK01" /proc/device-tree/model 2>/dev/null)" ] && model="b1300"
+[ -n "$(grep "DK04" /proc/device-tree/model 2>/dev/null)" ] && model="b1300"
+
+case "$model" in
+"b1300")
+	GPIO=58
+	;;
+"s1300")
+	GPIO=39
+	;;
+esac
+
+echo $GPIO >/sys/class/gpio/export
+
+echo out >/sys/class/gpio/gpio${GPIO}/direction
+
+feed_dog()
+{
+ 	local count=5
+        for i in $(seq 1 $count);
+        do
+                echo 1 >/sys/class/gpio/gpio${GPIO}/value
+                sleep 0.05
+                echo 0 >/sys/class/gpio/gpio${GPIO}/value
+                sleep 0.05
+        done
+}
+
+detect_reboot_by_hw_watchdog()
+{	
+	echo in >/sys/class/gpio/gpio$GPIO/direction
+	for i in $(seq 1 20)
+	do
+		v0=$(cat /sys/class/gpio/gpio${GPIO}/value)
+		sleep 0.001
+		v1=$(cat /sys/class/gpio/gpio${GPIO}/value)
+		sleep 0.001
+		v2=$(cat /sys/class/gpio/gpio${GPIO}/value)
+		sleep 0.001
+		v3=$(cat /sys/class/gpio/gpio${GPIO}/value)
+		sleep 0.001
+		if [ "$v0" = "$v1" -a "$v1" = "$v2" -a "$v2" = "$v3" ]; then
+			no_pulse=$(($no_pulse + 1));
+		fi
+		sleep 0.5
+	done
+}
+
+feed_dog
+
+exit 0
+
+no_pulse=0
+
+detect_reboot_by_hw_watchdog
+
+[ "$no_pulse" > 18 ] && echo "$(date +%Y-%m-%d/%T) reset" >> /tmp/reset_by_hw_watchdog
+
+while true; do
+	feed_dog
+	sleep 10
+done
+
+

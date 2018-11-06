@@ -1,0 +1,22 @@
+#!/bin/sh
+
+echo gpio_test > /dev/console
+gpio_control 0
+whlile true
+do
+	read line </dev/console
+	if [ "$line" == "ok$i" ];then
+		let i=i+1
+		gpio_control $i
+		echo "next" > /dev/console
+	else
+		echo gpio_test > /dev/console
+	fi
+
+	if [ $i -gt 27 ];then
+		break
+	fi
+done
+echo "end" > /dev/console
+read result < /dev/console
+echo "$result" > /dev/pts/0

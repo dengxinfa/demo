@@ -1,0 +1,43 @@
+#!/bin/sh
+select=$1
+echo_information(){
+	if [ $1 -eq 0 ]
+	then
+		echo "#####################" >>/watchdog.out
+		echo -e "time:`date +%Y-%m-%d_%H:%M:%S` uboot fail to stop the hardware watchdog!\r\n" >> /watchdog.out
+	elif [ $1 -eq 1 ]
+	then
+		echo "#####################" >>/watchdog.out
+		echo -e "time:`date +%Y-%m-%d_%H:%M:%S` uboot fail to start the hardware watchdog!\r\n" >> /watchdog.out
+	else
+		echo "#####################" >>/watchdog.out
+		echo -e "time:`date +%Y-%m-%d_%H:%M:%S` start feeddog loop!\r\n" >> /watchdog.out
+	fi
+}
+
+uboot_bootcount="`fw_printenv | grep bootcount | cut -d = -f 2`"
+if [ -e /bootcount ]
+then
+	firmware_bootcount="`cat /bootcount`"
+else
+	echo $uboot_bootcount > /bootcount
+	reboot
+	exit 0
+fi
+
+if [ $select -eq 1 ]
+then
+	/watchdog.sh &
+	echo_information 2
+else
+	let firmware_bootcount=$firmware_bootcount+1
+	if [ $uboot_bootcount -ne $firmware_bootcount ]
+	then
+		echo_information 0
+		
+	fi
+	echo $uboot_bootcount > /bootcount	
+	sleep 180
+	echo_information 1
+	reboot
+fi

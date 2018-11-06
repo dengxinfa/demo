@@ -1,0 +1,68 @@
+#!/bin/sh                                                                       
+                                                                                
+sed -i "s/0.1/3/g" /usr/bin/core_flash_led                                      
+                                                                                
+sed -i '22i echo 0 > /sys/class/gpio/gpio28/value' /usr/bin/core_flash_led      
+sed -i '23i sleep 1' /usr/bin/core_flash_led
+
+sed -i '27i echo 1 > /sys/class/leds/gl_mifi\:usb_a_pow_nobatt/brightness' /usr/bin/core_flash_led      
+sed -i '28i sleep 1' /usr/bin/core_flash_led
+
+sed -i '32i echo 1 > /sys/class/leds/gl_mifi\:usb_a_pow_batt/brightness' /usr/bin/core_flash_led      
+sed -i '33i sleep 1' /usr/bin/core_flash_led
+
+sed -i '37i echo 1 > /sys/class/leds/gl_mifi\:usbpow/brightness' /usr/bin/core_flash_led      
+sed -i '38i sleep 1' /usr/bin/core_flash_led
+
+sed -i '44i echo 1 > /sys/class/gpio/gpio26/value' /usr/bin/core_flash_led      
+sed -i '45i sleep 1' /usr/bin/core_flash_led
+
+sed -i '49i echo 1 > /sys/class/leds/gl_mifi\:wan/brightness' /usr/bin/core_flash_led      
+sed -i '50i sleep 1' /usr/bin/core_flash_led
+
+sed -i '56i echo 0 > /sys/class/gpio/gpio17/value' /usr/bin/core_flash_led      
+sed -i '57i sleep 1' /usr/bin/core_flash_led
+
+sed -i '61i echo 1 > /sys/class/leds/gl_mifi\:lan/brightness' /usr/bin/core_flash_led      
+sed -i '62i sleep 1' /usr/bin/core_flash_led
+
+sed -i '68i echo 1 > /sys/class/gpio/gpio15/value' /usr/bin/core_flash_led      
+sed -i '69i sleep 1' /usr/bin/core_flash_led
+
+sed -i '75i echo 1 > /sys/class/gpio/gpio14/valu' /usr/bin/core_flash_led      
+sed -i '76i sleep 1' /usr/bin/core_flash_led
+
+sed -i '82i echo 0 > /sys/class/gpio/gpio13/value' /usr/bin/core_flash_led      
+sed -i '83i sleep 1' /usr/bin/core_flash_led
+
+sed -i '87i echo 0 > /sys/class/leds/gl_mifi\:wlan/brightness' /usr/bin/core_flash_led      
+sed -i '88i sleep 1' /usr/bin/core_flash_led
+
+sed -i '92i echo 1 > /sys/class/leds/gl_mifi\:net/brightness' /usr/bin/core_flash_led      
+sed -i '93i sleep 1' /usr/bin/core_flash_led
+
+sed -i '99i echo 1 > /sys/class/gpio/gpio24/value' /usr/bin/core_flash_led      
+sed -i '100i sleep 1' /usr/bin/core_flash_led
+
+sed -i '104i echo 1 > /sys/class/gpio/gpio23/value' /usr/bin/core_flash_led      
+sed -i '105i sleep 1' /usr/bin/core_flash_led
+
+sed -i '111i echo 1 > /sys/class/gpio/gpio22/value' /usr/bin/core_flash_led      
+sed -i '112i sleep 1' /usr/bin/core_flash_led
+
+sed -i '118i echo 1 > /sys/class/gpio/gpio21/value' /usr/bin/core_flash_led      
+sed -i '119i sleep 1' /usr/bin/core_flash_led
+
+sed -i '125i echo 1 > /sys/class/gpio/gpio20/value' /usr/bin/core_flash_led      
+sed -i '126i sleep 1' /usr/bin/core_flash_led
+
+sed -i '132i echo 1 > /sys/class/gpio/gpio19/value' /usr/bin/core_flash_led      
+sed -i '133i sleep 1' /usr/bin/core_flash_led
+
+sed -i '139i echo 1 > /sys/class/gpio/gpio18/value' /usr/bin/core_flash_led      
+sed -i '140i sleep 1' /usr/bin/core_flash_led
+
+sed -i '146i echo 1 > /sys/class/gpio/gpio12/value' /usr/bin/core_flash_led      
+sed -i '147i sleep 1' /usr/bin/core_flash_led
+
+sed -i '148i exit 0' /usr/bin/core_flash_led

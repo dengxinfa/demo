@@ -1,0 +1,20 @@
+#!/bin/sh
+
+GPIO=16
+if [ ! -e /sys/class/gpio/gpio${GPIO} ];then
+	echo $GPIO >/sys/class/gpio/export
+fi
+
+if [ "`cat /sys/class/gpio/gpio${GPIO}/direction`" != "out" ];then
+	echo out >/sys/class/gpio/gpio${GPIO}/direction
+fi
+
+for i in $(seq 1 5);
+do
+	echo 1 >/sys/class/gpio/gpio${GPIO}/value
+	sleep 0.01
+	echo 0 >/sys/class/gpio/gpio${GPIO}/value
+	sleep 0.01
+done
+
+exit 0
